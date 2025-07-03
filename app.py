@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, send_from_directory, abort
+from flask import Flask, request, send_from_directory, abort, jsonify
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -44,3 +44,15 @@ def get_file(filename):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
+
+@app.route('/getgallery')
+def get_gallery_json():
+    auth = request.headers.get('Authorization')
+    if auth != f'Bearer {VIEW_API_KEY}':
+        return 'Unauthorized', 401
+
+    files = os.listdir(UPLOAD_FOLDER)
+    # Optional: nur Dateien zurückgeben, keine Verzeichnisse
+    files = [f for f in files if os.path.isfile(os.path.join(UPLOAD_FOLDER, f))]
+    return jsonify({"files": files})
