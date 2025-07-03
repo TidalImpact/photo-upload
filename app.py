@@ -50,15 +50,11 @@ def get_gallery_json():
     if auth != f'Bearer {VIEW_API_KEY}':
         return 'Unauthorized', 401
 
-    # In-Memory ZIP erstellen
-    mem_zip = io.BytesIO()
-    with zipfile.ZipFile(mem_zip, mode='w') as zf:
-        for filename in os.listdir(UPLOAD_FOLDER):
-            file_path = os.path.join(UPLOAD_FOLDER, filename)
-            if os.path.isfile(file_path):
-                zf.write(file_path, arcname=filename)
-    mem_zip.seek(0)
-    return send_file(mem_zip, mimetype='application/zip', as_attachment=True, download_name='all_images.zip')
+    files = [f for f in os.listdir(UPLOAD_FOLDER) if os.path.isfile(os.path.join(UPLOAD_FOLDER, f))]
+    # URLs bauen, die auf /gallery/<filename> zeigen
+    base_url = request.host_url.rstrip('/')
+    files_with_urls = [{"filename": f, "url": f"{base_url}/gallery/{f}"} for f in files]
+    return jsonify({"files": files_with_urls})
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
