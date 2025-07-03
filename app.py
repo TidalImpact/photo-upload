@@ -1,11 +1,11 @@
-from flask import Flask, request, send_from_directory, abort
 import os
+from flask import Flask, request, send_from_directory, abort
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
-UPLOAD_API_KEY = 'UPLOAD123'  # Key zum Hochladen
-VIEW_API_KEY = 'VIEW456'      # Key zum Anschauen
+UPLOAD_API_KEY = 'UPLOAD123'
+VIEW_API_KEY = 'VIEW456'
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -30,7 +30,6 @@ def gallery():
         return 'Unauthorized', 401
 
     files = os.listdir(UPLOAD_FOLDER)
-    # Einfachste Galerie: Liste der Dateien als Links
     file_links = [f'<li><a href="/gallery/{f}">{f}</a></li>' for f in files]
     return f"<h1>Gallery</h1><ul>{''.join(file_links)}</ul>"
 
@@ -43,4 +42,5 @@ def get_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
