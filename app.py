@@ -41,9 +41,7 @@ def get_file(filename):
 
     return send_from_directory(UPLOAD_FOLDER, filename)
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+
 
 
 @app.route('/getgallery')
@@ -56,3 +54,10 @@ def get_gallery_json():
     # Optional: nur Dateien zurückgeben, keine Verzeichnisse
     files = [f for f in files if os.path.isfile(os.path.join(UPLOAD_FOLDER, f))]
     return jsonify({"files": files})
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+
+
+
